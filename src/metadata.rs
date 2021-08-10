@@ -18,6 +18,10 @@ pub async fn add_title_metadata(title_path: &PathBuf) -> Result<(), Box<dyn Erro
     );
 
     let metadata_file_path = title_path.join(METADATA_FILE);
+    if metadata_file_path.exists() {
+        println!("{:?} already exists. Skipping...", metadata_file_path);
+        return Ok(());
+    }
     println!("Creating {:?}", metadata_file_path);
 
     println!("Fetching metadata from {}", url);

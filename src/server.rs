@@ -35,13 +35,12 @@ fn read_episodes(path: &PathBuf) -> Result<Vec<DirEntry>> {
 }
 
 fn move_episode(ep_number: usize, ep_path: &PathBuf) -> Result<()> {
-    let episode_folder = PathBuf::from(ep_path.parent().unwrap())
-        .join(format!("{:0>3}", ep_number));
+    let mut new_ep_path = PathBuf::from(ep_path)
+        .with_file_name(format!("{:0>3}", ep_number));
 
-    fs::create_dir(&episode_folder)?;
-
-    let new_ep_path = episode_folder
-        .join(ep_path.file_name().unwrap());
+    if let Some(extension) = ep_path.extension() {
+        new_ep_path = new_ep_path.with_extension(extension);
+    }
 
     println!("Moved episode to {:?}", new_ep_path);
     fs::rename(ep_path, new_ep_path)
