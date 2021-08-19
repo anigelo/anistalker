@@ -9,7 +9,7 @@ const MEDIA_PATH: &str = "/nas/nfs/docker/jellyfin/media/anime";
 async fn main() -> Result<(), Box<dyn Error>> {
     for dir in server::read_media_folder(MEDIA_PATH)? {
         server::make_episode_folders(&dir)?;
-        metadata::add_title_metadata(&dir.path()).await?;
+        metadata::add_metadata(&dir.path()).await?;
     }
     Ok(())
 }
