@@ -1,6 +1,6 @@
 mod anime;
 mod fs_scan;
-mod fs_write;
+mod fs_store;
 mod metadata;
 mod config;
 
@@ -9,11 +9,13 @@ mod prelude {
     pub use crate::anime::*;
 }
 
-use prelude::*;
-
 fn main() {
-    let animes = fs_scan::scan(&get_media_path());
+    let animes = fs_scan::scan();
+
+    fs_store::save_to_data_folder(animes).unwrap();
     
-    fs_write::save_to_data_folder(animes).unwrap();
+    let animes = fs_store::get_anime_collection().unwrap();
+    
+    println!("{:?}", animes);
 }
 

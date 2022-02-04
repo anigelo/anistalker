@@ -1,11 +1,12 @@
 ﻿
 use std::fs::DirEntry;
 use regex::Regex;
+use lazy_static::lazy_static;
 use crate::prelude::*;
 
-pub fn scan(media_path: &str) -> AnimeCollection {
+pub fn scan() -> AnimeCollection {
     AnimeCollection {
-        collection: get_anime_folders(media_path).unwrap().into_iter()
+        collection: get_anime_folders(&get_media_path()).unwrap().into_iter()
             .map(|anime| Anime {
                 title: anime.path().file_stem().unwrap().to_str().unwrap().to_string(),
                 seasons: get_seasons(anime).unwrap_or(vec![])
@@ -29,13 +30,15 @@ fn get_episodes(season: DirEntry) -> std::io::Result<Vec<AnimeEpisode>> {
 }
 
 fn get_seasons(anime: DirEntry) -> std::io::Result<Vec<AnimeSeason>> {
-    let re = Regex::new(r"(S|Season )(\d{2})").unwrap();
+    lazy_static! {
+        static ref RE: Regex = Regex::new(r"(S|Season )(\d{2})").unwrap();
+    }
 
     let seasons: Vec<AnimeSeason> = anime.path().read_dir()?
         .filter_map(|dir| dir.ok())
         .filter(|dir| dir.path().is_dir())
         .filter_map(|dir| {
-            if let Some(captures) = re.captures(dir.file_name().to_str().unwrap()) {
+            if let Some(captures) = RE.captures(dir.file_name().to_str().unwrap()) {
                 if let Some(group) = captures.get(2) {
                     Some(AnimeSeason {episodes: get_episodes(dir).unwrap_or(vec![]), season: group.as_str().parse().unwrap()})
                 } else { None }
