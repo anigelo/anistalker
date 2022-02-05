@@ -2,6 +2,7 @@
 
 const DEFAULT_MEDIA_PATH: &str = "/media";
 const DEFAULT_DATA_PATH: &str = "/data";
+const DEFAULT_LANG: &str = "en-US";
 
 pub fn get_media_path() -> String {
     env::var("ANIGELO_MEDIA_PATH")
@@ -11,4 +12,13 @@ pub fn get_media_path() -> String {
 pub fn get_data_path() -> String {
     env::var("ANIGELO_DATA_PATH")
         .unwrap_or(String::from(DEFAULT_DATA_PATH))
+}
+
+pub fn get_metadata_api_key() -> String {
+    env::var("ANIGELO_METADATA_API_KEY").expect("API KEY IS MISSING")
+}
+
+pub fn get_lang() -> String {
+    env::var("ANIGELO_LANG")
+        .unwrap_or(String::from(DEFAULT_LANG))
 }
