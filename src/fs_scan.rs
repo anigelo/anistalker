@@ -1,5 +1,4 @@
-﻿
-use std::fs::DirEntry;
+﻿use std::fs::DirEntry;
 use regex::Regex;
 use lazy_static::lazy_static;
 use crate::prelude::*;
@@ -7,10 +6,11 @@ use crate::prelude::*;
 pub fn scan() -> AnimeCollection {
     AnimeCollection {
         collection: get_anime_folders(&get_media_path()).unwrap().into_iter()
-            .map(|anime| Anime {
-                title: anime.path().file_stem().unwrap().to_str().unwrap().to_string(),
-                seasons: get_seasons(anime).unwrap_or(vec![])
-            }).collect()
+            .map(|anime| Anime::new(
+                anime.path(),
+                anime.path().file_stem().unwrap().to_str().unwrap().to_string(),
+                get_seasons(anime).unwrap_or(vec![])
+            )).collect()
     }
 }
 
@@ -21,7 +21,7 @@ fn get_episodes(season: DirEntry) -> std::io::Result<Vec<AnimeEpisode>> {
         .filter_map(|dir| {
             let episode_number = dir.path().file_stem().unwrap().to_str().unwrap().parse();
             if let Ok(episode) = episode_number {
-                Some(AnimeEpisode {number: episode, title: String::new(), path: dir.path()})
+                Some(AnimeEpisode::new(episode, dir.path()))
             } else { None }
         })
         .collect();
@@ -40,7 +40,10 @@ fn get_seasons(anime: DirEntry) -> std::io::Result<Vec<AnimeSeason>> {
         .filter_map(|dir| {
             if let Some(captures) = RE.captures(dir.file_name().to_str().unwrap()) {
                 if let Some(group) = captures.get(2) {
-                    Some(AnimeSeason {episodes: get_episodes(dir).unwrap_or(vec![]), season: group.as_str().parse().unwrap()})
+                    Some(AnimeSeason::new(
+                        dir.path(),
+                        group.as_str().parse().unwrap(), 
+                        get_episodes(dir).unwrap_or(vec![])))
                 } else { None }
             } else {
                 None
@@ -49,7 +52,7 @@ fn get_seasons(anime: DirEntry) -> std::io::Result<Vec<AnimeSeason>> {
         .collect();
 
     if seasons.is_empty() {
-        Ok(vec![AnimeSeason{season: 1, episodes: get_episodes(anime).unwrap_or(vec![])}])
+        Ok(vec![AnimeSeason::new(anime.path(), 1, get_episodes(anime).unwrap_or(vec![]))])
     } else {
         Ok(seasons)
     }

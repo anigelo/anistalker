@@ -20,6 +20,7 @@ pub struct TvSeasonMetadata {
 pub struct TvEpisodeMetadata {
     pub episode_number: u8,
     pub id: u32,
+    pub name: String,
     pub overview: String,
-    pub still_path: String
+    pub still_path: Option<String>
 }

@@ -48,13 +48,19 @@ pub async fn get_anime_season_metadata(id: u32, season: u8) -> Result<TvSeasonMe
     Ok(metadata)
 }
 
-pub async fn download_metadata_image(image_endpoint: &str, target_path: PathBuf) -> Result<(), Box<dyn std::error::Error>> {
+pub async fn download_metadata_image(image_endpoint: &str, target_path: PathBuf) -> Result<PathBuf, Box<dyn std::error::Error>> {
     let image_url = format!("{}{}", BASE_IMAGE_URL, image_endpoint);
     let response = reqwest::get(&image_url).await?.bytes().await?;
     
     let extension = image_endpoint.split('.').last().unwrap();
-    let mut target = File::create(target_path.with_extension(extension))?;
+    let target_path = target_path.with_extension(extension);
+
+    println!("Downloading image in: {:?}", target_path);
+    let parent = target_path.parent().unwrap();
+    std::fs::create_dir_all(parent)?;
+    let mut target = File::create(&target_path)?;
+    println!("{:?}", target_path);
     
     io::copy(&mut response.as_ref(), &mut target)?;
-    Ok(())
+    Ok(target_path)
 }

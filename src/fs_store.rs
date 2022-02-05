@@ -9,6 +9,7 @@ pub fn save_to_data_folder(collection: AnimeCollection) -> io::Result<()> {
     fs::write(get_index_path(), json)
 }
 
+#[allow(dead_code)]
 pub fn get_anime_collection() -> io::Result<AnimeCollection> {
     let anime_collection = fs::read_to_string(get_index_path())?;
     let anime_collection = serde_json::from_str(&anime_collection).unwrap();
