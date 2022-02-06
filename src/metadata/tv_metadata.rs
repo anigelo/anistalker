@@ -2,8 +2,8 @@
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TvMetadata {
-    pub backdrop_path: String,
-    pub poster_path: String,
+    pub backdrop_path: Option<String>,
+    pub poster_path: Option<String>,
     pub overview: String,
     pub name: String,
 }
@@ -11,8 +11,7 @@ pub struct TvMetadata {
 #[derive(Debug, Serialize, Deserialize)]
 pub struct TvSeasonMetadata {
     pub id: u32,
-    pub poster_path: String,
-    pub overview: String,
+    pub poster_path: Option<String>,
     pub episodes: Vec<TvEpisodeMetadata>
 }
 

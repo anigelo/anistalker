@@ -6,8 +6,7 @@ pub struct AnimeSeason {
     pub(crate) number: u8,
     pub(crate) path: PathBuf,
     pub(crate) episodes: Vec<AnimeEpisode>,
-    pub(crate) poster: PathBuf,
-    pub(crate) description: String
+    pub(crate) poster: PathBuf
 }
 
 #[derive(Debug, Serialize, Deserialize)]
@@ -51,8 +50,7 @@ impl AnimeSeason {
     pub fn new(path: PathBuf, number: u8, episodes: Vec<AnimeEpisode>) -> AnimeSeason {
         AnimeSeason {
             number, episodes, path,
-            poster: PathBuf::new(),
-            description: String::new()
+            poster: PathBuf::new()
         }
     }
 }

@@ -20,16 +20,14 @@ fn base_url(endpoint: &str) -> String {
     )
 }
 
-pub async fn search_anime_metadata(title: &str) -> Result<Option<u32>, reqwest::Error> {
+pub async fn search_anime_metadata(title: &str) -> Result<u32, Box<dyn std::error::Error>> {
     let request_url = format!("{}&query={}", base_url("/search/tv"), title);
     
     let search: SearchResults = reqwest::get(&request_url).await?.json().await?;
-    
-    if let Some(first) = search.results.first() {
-        Ok(Some(first.id))
-    } else { 
-        Ok(None)
-    }
+
+    if let Some(result) = search.results.first() {
+        Ok(result.id)
+    } else { panic!("No matches") }
 }
 
 pub async fn get_anime_metadata(id: u32) -> Result<TvMetadata, reqwest::Error> {
