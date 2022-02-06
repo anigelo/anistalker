@@ -20,6 +20,7 @@ pub struct AnimeEpisode {
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct Anime {
+    pub(crate) id: Option<u32>,
     pub(crate) folder_title: String,
     pub(crate) title: String,
     pub(crate) path: PathBuf,
@@ -41,7 +42,8 @@ impl Anime {
             title: String::new(),
             poster: PathBuf::new(),
             backdrop: PathBuf::new(),
-            description: String::new()
+            description: String::new(),
+            id: None
         }
     }
 }

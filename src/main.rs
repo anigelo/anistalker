@@ -30,6 +30,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
 
 async fn update_anime_metadata(id: u32, anime: &mut Anime) -> Result<(), Box<dyn std::error::Error>> {
     let anime_metadata = metadata::get_anime_metadata(id).await?;
+    anime.id = Some(id);
     println!("Description: {}", anime_metadata.overview);
     anime.description = anime_metadata.overview;
     println!("Title: {}", anime_metadata.name);
