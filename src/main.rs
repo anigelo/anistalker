@@ -1,8 +1,10 @@
+extern crate dotenv;
+
 mod anime;
 mod fs_scan;
-mod fs_store;
 mod metadata;
 mod config;
+mod database;
 
 mod prelude {
     pub use crate::config::*;
@@ -10,9 +12,12 @@ mod prelude {
 }
 
 use prelude::*;
+use dotenv::dotenv;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
+    dotenv().ok();
+
     let mut animes = fs_scan::scan();
 
     for anime in animes.collection.iter_mut() {
@@ -23,8 +28,7 @@ async fn main() -> Result<(), Box<dyn std::error::Error>> {
         }        
     }
 
-    fs_store::save_to_data_folder(animes)?;
-    
+    database::save_to_data_folder(animes).await?;
     Ok(())
 }
 
