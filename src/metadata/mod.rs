@@ -3,7 +3,7 @@ use std::io;
 use std::path::PathBuf;
 use search_result::*;
 use tv_metadata::*;
-use crate::prelude::*;
+use crate::config;
 
 mod search_result;
 mod tv_metadata;
@@ -15,8 +15,8 @@ fn base_url(endpoint: &str) -> String {
     format!("{base}{endpoint}?api_key={api_key}&language={language}", 
             base = BASE_URL,
             endpoint = endpoint,
-            api_key = &get_metadata_api_key(),
-            language = &get_lang()
+            api_key = &config::get_metadata_api_key(),
+            language = &config::get_lang()
     )
 }
 

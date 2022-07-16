@@ -1,5 +1,6 @@
 ﻿use std::path::PathBuf;
 use serde::{Deserialize,Serialize};
+use crate::config;
 
 #[derive(Debug, Serialize, Deserialize)]
 pub struct AnimeSeason {
@@ -14,6 +15,7 @@ pub struct AnimeEpisode {
     pub(crate) number: u8,
     pub(crate) title: String,
     pub(crate) path: PathBuf,
+    pub(crate) video: PathBuf,
     pub(crate) description: String,
     pub(crate) thumbnail: PathBuf
 }
@@ -60,10 +62,23 @@ impl AnimeSeason {
 impl AnimeEpisode {
     pub fn new(number: u8, path: PathBuf) -> AnimeEpisode {
         AnimeEpisode {
+            video: strip_base_path(&path),
             path, number, 
             title: String::new(),
             description: String::new(),
             thumbnail: PathBuf::new()
+        }
+    }
+}
+
+pub fn strip_base_path(path: &PathBuf) -> PathBuf {
+    let media_path = config::get_media_path();
+
+    match path.strip_prefix(media_path) {
+        Ok(new_path) => new_path.to_path_buf(),
+        Err(err) => {
+            eprintln!("Error striping path for '{:#?}': {:#?}", path, err);
+            path.to_path_buf()
         }
     }
 }

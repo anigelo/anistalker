@@ -2,10 +2,11 @@ services:
   database:
     image: "mongo:5.0"
     container_name: anigelo-db
+    env_file: .env
     ports:
       - 27017-27019:27017-27019
     environment:
-      - MONGO_INITDB_ROOT_USERNAME=local_dev
-      - MONGO_INITDB_ROOT_PASSWORD=local_dev_pwd
+      - MONGO_INITDB_ROOT_USERNAME=$ANIGELO_DB_USER
+      - MONGO_INITDB_ROOT_PASSWORD=$ANIGELO_DB_PWD
     volumes:
       - $ANIGELO_DB_PATH:/data/db

@@ -4,14 +4,15 @@ use mongodb::bson::doc;
 use mongodb::Client;
 use mongodb::options::ClientOptions;
 use futures::stream::TryStreamExt;
-use crate::prelude::*;
+use crate::anime::*;
+use crate::config;
 
 const DB: &str = "anigelo";
 const COLLECTION: &str = "anime";
 const APP_NAME: &str = "AniStalker";
 
 pub async fn save_to_data_folder(animes: AnimeCollection) -> Result<(), Box<dyn Error>> {
-    let mut options = ClientOptions::parse(get_connection_string()).await?;
+    let mut options = ClientOptions::parse(config::get_connection_string()).await?;
     options.app_name = Some(APP_NAME.to_string());
 
     let collection = Client::with_options(options)?

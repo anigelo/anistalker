@@ -1,11 +1,12 @@
 ﻿use std::fs::DirEntry;
 use regex::Regex;
 use lazy_static::lazy_static;
-use crate::prelude::*;
+use crate::config;
+use crate::anime::*;
 
 pub fn scan() -> AnimeCollection {
     AnimeCollection {
-        collection: get_anime_folders(&get_media_path()).unwrap().into_iter()
+        collection: get_anime_folders(&config::get_media_path()).unwrap().into_iter()
             .map(|anime| Anime::new(
                 anime.path(),
                 anime.path().file_stem().unwrap().to_str().unwrap().to_string(),

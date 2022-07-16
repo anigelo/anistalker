@@ -6,13 +6,8 @@ mod metadata;
 mod config;
 mod database;
 
-mod prelude {
-    pub use crate::config::*;
-    pub use crate::anime::*;
-}
-
-use prelude::*;
 use dotenv::dotenv;
+use crate::anime::*;
 
 #[tokio::main]
 async fn main() -> Result<(), Box<dyn std::error::Error>> {
@@ -40,26 +35,26 @@ async fn update_anime_metadata(id: u32, anime: &mut Anime) -> Result<(), Box<dyn
     println!("Title: {}", anime_metadata.name);
     anime.title = anime_metadata.name;
     if let Some(backdrop) = &anime_metadata.backdrop_path {
-        anime.backdrop = metadata::download_metadata_image(
+        anime.backdrop = strip_base_path(&metadata::download_metadata_image(
             backdrop,
             anime.path.join("backdrop")
-        ).await?;
+        ).await?);
     }
     if let Some(poster) = &anime_metadata.poster_path {
-        anime.poster = metadata::download_metadata_image(
+        anime.poster = strip_base_path(&metadata::download_metadata_image(
             poster,
             anime.path.join("poster")
-        ).await?;
+        ).await?);
     }
 
     for season in anime.seasons.iter_mut() {
         println!("Updating metadata for season {}", season.number);
         let season_metadata = metadata::get_anime_season_metadata(id, season.number).await?;
         if let Some(poster) = &season_metadata.poster_path {
-            season.poster = metadata::download_metadata_image(
+            season.poster = strip_base_path(&metadata::download_metadata_image(
                 poster,
                 season.path.join("poster")
-            ).await?;
+            ).await?);
         }
 
         for episode in season.episodes.iter_mut() {
@@ -72,10 +67,10 @@ async fn update_anime_metadata(id: u32, anime: &mut Anime) -> Result<(), Box<dyn
                 println!("Description: {}", metadata.overview);
                 episode.description = String::from(&metadata.overview);
                 if let Some(still_path) = &metadata.still_path {
-                    episode.thumbnail = metadata::download_metadata_image(
+                    episode.thumbnail = strip_base_path(&metadata::download_metadata_image(
                         still_path,
                         episode.path.parent().unwrap().join("metadata").join(format!("{:02}", episode.number))
-                    ).await?;
+                    ).await?);
                 }
             }
         }
